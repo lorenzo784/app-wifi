@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>App Wifi</title>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static 'css/all.css' %}" />
+  </head>
+  <body>
+    <div class="info-card">
+      <h2>Arquitectura de Computadoras y Ensambladores 2</h2>
+      <h3>Integrantes:</h3>
+      <ul>
+        <li>Daimler´ss Hamiltón Ivánn Castro Aguilar - 202146856</li>
+        <li>Lorenzo Antonio Lopez Tahuico - 20210289</li>
+        <li>Inge: Edwin Macz</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="bulb">
+        <i id="light" class="fas fa-lightbulb"></i>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="check" />
+        <label for="check"></label>
+      </div>
+    </div>
+    <script src="{% static 'js/all.js' %}"></script>
+  </body>
+</html>
