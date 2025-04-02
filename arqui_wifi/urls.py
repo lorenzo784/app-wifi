@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index),
     path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
+    path('obtener_estado/', views.obtener_estado, name='obtener_estado'),
 ]

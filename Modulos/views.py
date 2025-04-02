@@ -16,3 +16,11 @@ def cambiar_estado(request):
 
         return JsonResponse({'encendido': dispositivo.encendido})
     return JsonResponse({'error': 'Dispositivo no encontrado'}, status=404)
+
+def obtener_estado(request):
+    dispositivo = DispositivoIoT.objects.first()
+
+    if dispositivo:
+        return JsonResponse({'encendido': dispositivo.encendido})
+    
+    return JsonResponse({'error': 'Dispositivo no encontrado'}, status=404)
