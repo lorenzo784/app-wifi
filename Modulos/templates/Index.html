@@ -27,13 +27,42 @@
 
     <div>
       <div class="bulb">
-        <i id="light" class="fas fa-lightbulb"></i>
+        <i id="light" class="fas fa-lightbulb {% if dispositivo.encendido %} on {% endif %}"></i>
       </div>
       <div class="switch">
-        <input type="checkbox" id="check" />
+        <input type="checkbox" id="check" {% if dispositivo.encendido %} checked {% endif %} />
         <label for="check"></label>
       </div>
     </div>
+
     <script src="{% static 'js/all.js' %}"></script>
+    <script>
+      document.querySelector("#check").addEventListener("click", function () {
+        let bulb = document.querySelector("#light");
+
+        if (this.checked) {
+          bulb.classList.add("on");
+        } else {
+          bulb.classList.remove("on");
+        }
+        fetch("{% url 'cambiar_estado' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": '{{ csrf_token }}',
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.encendido) {
+            console.log("Estado del dispositivo actualizado: Encendido");
+          } else {
+            console.log("Estado del dispositivo actualizado: Apagado");
+          }
+        })
+        .catch(error => {
+          console.error("Error al cambiar el estado:", error);
+        });
+      });
+    </script>
   </body>
 </html>

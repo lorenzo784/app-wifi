@@ -20,5 +20,6 @@ from Modulos import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.index)
+    path('',views.index),
+    path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
 ]
