@@ -1,26 +1,14 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import DispositivoIoT
+import random
 
-# Create your views here.
 def index(request):
-    dispositivo = DispositivoIoT.objects.first()
-    return render(request, 'Index.html', {'dispositivo': dispositivo})
+    return render(request, 'ActualData.html')
 
-def cambiar_estado(request):
-    dispositivo = DispositivoIoT.objects.first()
-
-    if dispositivo:
-        dispositivo.encendido = not dispositivo.encendido
-        dispositivo.save()
-
-        return JsonResponse({'encendido': dispositivo.encendido})
-    return JsonResponse({'error': 'Dispositivo no encontrado'}, status=404)
-
-def obtener_estado(request):
-    dispositivo = DispositivoIoT.objects.first()
-
-    if dispositivo:
-        return JsonResponse({'encendido': dispositivo.encendido})
-    
-    return JsonResponse({'error': 'Dispositivo no encontrado'}, status=404)
+def get_potentiometer_value(request):
+    value = random.randint(0, 1023)
+    return JsonResponse({
+        'value': value,
+        'voltage': round((value / 1023) * 5, 2),
+        'resistance': round((value / 1023) * 10, 1)
+    })

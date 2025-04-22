@@ -1,0 +1,290 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monitor de Potenciómetro 10k</title>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static 'css/all.css' %}" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f2f5;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header-card {
+        font-family: Arial, sans-serif;
+        color: #000000;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 6px solid #3498db;
+      }
+      .header-card h1 {
+        color: #000000;
+        font-size: 24px;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      .header-card h2 {
+        color: #000000;
+        font-size: 20px;
+        margin: 15px 0 10px 0;
+        text-align: center;
+      }
+      .members-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0 auto;
+        max-width: 600px;
+      }
+      .members-list li {
+        margin-bottom: 8px;
+        padding: 8px 12px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        text-align: center;
+      }
+
+      .sensor-container {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        margin-bottom: 30px;
+      }
+      .sensor-icon {
+        font-size: 120px;
+        color: #3498db;
+        min-width: 150px;
+        text-align: center;
+      }
+      .sensor-info {
+        flex: 1;
+      }
+      .sensor-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 15px 0;
+      }
+      .value-display {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        min-width: 120px;
+        text-align: center;
+      }
+      .sensor-description {
+        margin: 20px 0;
+        color: #555;
+        line-height: 1.6;
+      }
+      .data-card {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 25px;
+        border: 1px solid #e0e0e0;
+      }
+      h2 {
+        color: #2c3e50;
+        margin-top: 0;
+        font-size: 28px;
+      }
+      h3 {
+        color: #3498db;
+        margin-bottom: 15px;
+        font-size: 22px;
+      }
+      h4 {
+        color: #2c3e50;
+        margin-top: 0;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 8px;
+        display: inline-block;
+      }
+      .progress-container {
+        width: 100%;
+        height: 25px;
+        background-color: #e0e0e0;
+        border-radius: 12px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3498db, #2ecc71);
+        border-radius: 12px;
+        width: 50%;
+        transition: width 0.5s ease;
+      }
+      .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+      }
+      .spec-item {
+        display: flex;
+      }
+      .spec-label {
+        font-weight: bold;
+        min-width: 120px;
+        color: #555;
+      }
+      .voltage-display {
+        margin-top: 15px;
+        font-size: 18px;
+      }
+      @media (max-width: 768px) {
+        .sensor-container {
+          flex-direction: column;
+          gap: 20px;
+        }
+        .specs-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-card">
+        <h1>Arquitectura de Computadoras y Ensambladores 2</h1>
+        <h2>Integrantes:</h2>
+        <ul class="members-list">
+          <li>Daimler's Hamiltón Ivánn Castro Aguilar - 202146856</li>
+          <li>Lorenzo Antonio Lopez Tahuico - 20210289</li>
+          <li>Ing. Edwin Macz</li>
+        </ul>
+      </div>
+
+      <h2>Monitor de Potenciómetro 10kΩ</h2>
+
+      <div class="sensor-container">
+        <div class="sensor-icon">
+          <i class="fas fa-sliders-h"></i>
+        </div>
+        <div class="sensor-info">
+          <h3>Potenciómetro Rotatorio 10kΩ</h3>
+          <div class="sensor-value">
+            Valor: <span class="value-display" id="pot-value">512</span>/1023
+          </div>
+
+          <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+
+          <div class="sensor-description">
+            <p>
+              Este potenciómetro de 10kΩ permite variar la resistencia de forma
+              manual. Conectado a un microcontrolador, proporciona valores
+              analógicos entre 0 y 1023 (resolución de 10 bits), equivalentes a
+              resistencias entre 0Ω y 10kΩ.
+            </p>
+          </div>
+
+          <div class="data-card">
+            <h4>Especificaciones Técnicas</h4>
+            <div class="specs-grid">
+              <div class="spec-item">
+                <span class="spec-label">Tipo:</span>
+                <span>Potenciómetro rotatorio</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Resistencia:</span>
+                <span>10kΩ lineal</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Tolerancia:</span>
+                <span>±20%</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Resolución:</span>
+                <span>10 bits (0-1023)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Voltaje máx.:</span>
+                <span>15V DC</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Temperatura:</span>
+                <span>-55°C a +125°C</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px">
+              <strong>Estado:</strong>
+              <span id="status" style="color: blue">Operativo (512)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/all.js' %}"></script>
+    <script>
+      function updatePotentiometer() {
+        fetch("/get-potentiometer/")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Error en la respuesta del servidor");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const rawValue = data.value;
+            const percentage = (rawValue / 1023) * 100;
+            const resistance = data.resistance;
+
+            // Elementos del DOM se actualizan
+            document.getElementById("pot-value").textContent = rawValue;
+            document.getElementById("progress-bar").style.width =
+              percentage + "%";
+
+            // Actualiza el estado
+            const statusElement = document.getElementById("status");
+            if (rawValue === 0) {
+              statusElement.textContent = "Mínimo (0 - 0Ω)";
+              statusElement.style.color = "red";
+            } else if (rawValue === 1023) {
+              statusElement.textContent = "Máximo (1023 - 10kΩ)";
+              statusElement.style.color = "green";
+            } else {
+              statusElement.textContent = `Operativo (${rawValue} - ${resistance}kΩ)`;
+              statusElement.style.color = "blue";
+            }
+          })
+          .catch((error) => {
+            console.error("Error al obtener datos:", error);
+            document.getElementById("status").textContent = "Error de conexión";
+            document.getElementById("status").style.color = "red";
+          });
+      }
+      // Actualizar cada 1.5 segundos
+      setInterval(updatePotentiometer, 1500);
+
+      document.addEventListener("DOMContentLoaded", updatePotentiometer);
+    </script>
+  </body>
+</html>

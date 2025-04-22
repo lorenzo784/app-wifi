@@ -17,15 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from Modulos import views
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.index),
-    path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
-    path('obtener_estado/', views.obtener_estado, name='obtener_estado'),
+    path('', views.index, name='index'),
+    path('get-potentiometer/', views.get_potentiometer_value, name='get_potentiometer'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_URL)
