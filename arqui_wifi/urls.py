@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('get-potentiometer/', views.get_potentiometer_value, name='get_potentiometer'),
+    path('api/set-data', views.set_data),
 ]

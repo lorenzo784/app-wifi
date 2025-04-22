@@ -6,3 +6,10 @@ class DispositivoIoT(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class DatoSensor(models.Model):
+    valor = models.IntegerField()
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.valor} - {self.fecha}"
