@@ -188,7 +188,7 @@
         <div class="sensor-info">
           <h3>Potenciómetro Rotatorio 10kΩ</h3>
           <div class="sensor-value">
-            Valor: <span class="value-display" id="pot-value">512</span>/1023
+            Valor: <span class="value-display" id="pot-value">512</span>/1024
           </div>
 
           <div class="progress-container">
@@ -199,7 +199,7 @@
             <p>
               Este potenciómetro de 10kΩ permite variar la resistencia de forma
               manual. Conectado a un microcontrolador, proporciona valores
-              analógicos entre 0 y 1023 (resolución de 10 bits), equivalentes a
+              analógicos entre 0 y 1024 (resolución de 10 bits), equivalentes a
               resistencias entre 0Ω y 10kΩ.
             </p>
           </div>
@@ -221,7 +221,7 @@
               </div>
               <div class="spec-item">
                 <span class="spec-label">Resolución:</span>
-                <span>10 bits (0-1023)</span>
+                <span>10 bits (0-1024)</span>
               </div>
               <div class="spec-item">
                 <span class="spec-label">Voltaje máx.:</span>
@@ -254,7 +254,7 @@
           })
           .then((data) => {
             const rawValue = data.value;
-            const percentage = (rawValue / 1023) * 100;
+            const percentage = (rawValue / 1024) * 100;
             const resistance = data.resistance;
 
             // Elementos del DOM se actualizan
@@ -267,8 +267,8 @@
             if (rawValue === 0) {
               statusElement.textContent = "Mínimo (0 - 0Ω)";
               statusElement.style.color = "red";
-            } else if (rawValue === 1023) {
-              statusElement.textContent = "Máximo (1023 - 10kΩ)";
+            } else if (rawValue === 1024) {
+              statusElement.textContent = "Máximo (1024 - 10kΩ)";
               statusElement.style.color = "green";
             } else {
               statusElement.textContent = `Operativo (${rawValue} - ${resistance}kΩ)`;
