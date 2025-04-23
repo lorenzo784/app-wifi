@@ -240,6 +240,22 @@
           </div>
         </div>
       </div>
+      <div class="data-card">
+        <h4>Historial de Lecturas</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px">
+          <thead>
+            <tr style="background-color: #3498db; color: white">
+              <th style="padding: 8px; border: 1px solid #ccc">Fecha y Hora</th>
+              <th style="padding: 8px; border: 1px solid #ccc">Valor</th>
+            </tr>
+          </thead>
+          <tbody id="historial-body">
+            <tr><td colspan="4" style="text-align:center; padding: 10px;">Cargando historial...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+
     </div>
 
     <script src="{% static 'js/all.js' %}"></script>
@@ -280,7 +296,31 @@
             document.getElementById("status").textContent = "Error de conexión";
             document.getElementById("status").style.color = "red";
           });
-      }
+      }function updateHistorial() {
+  fetch("/historial/")
+    .then((response) => response.json())
+    .then((data) => {
+      const tbody = document.getElementById("historial-body");
+      tbody.innerHTML = ""; // Limpia contenido previo
+
+      data.historial.forEach((registro) => {
+        const fila = document.createElement("tr");
+
+        fila.innerHTML = `
+          <td>${registro.fecha}</td>
+          <td>${registro.valor}</td>
+        `;
+
+        tbody.appendChild(fila);
+      });
+    })
+    .catch((error) => {
+      console.error("Error al cargar el historial:", error);
+    });
+}
+setInterval(updateHistorial, 500);
+document.addEventListener("DOMContentLoaded", updateHistorial);
+
       // Actualizar cada 1.5 segundos
       setInterval(updatePotentiometer, 500);
 

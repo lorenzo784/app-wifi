@@ -43,3 +43,16 @@ def set_data(request):
             return JsonResponse({"status": "error", "mensaje": str(e)}, status=400)
 
     return JsonResponse({"mensaje": "Método no permitido"}, status=405)
+
+def historial(request):
+    datos = DatoSensor.objects.order_by('-fecha')[:50]
+    historial = []
+
+    for dato in datos:
+        historial.append({
+            "fecha": dato.fecha.strftime("%Y-%m-%d %H:%M:%S"),
+            "valor": dato.valor
+        })
+
+    # Retorna el historial como un JSON
+    return JsonResponse({"historial": historial})
