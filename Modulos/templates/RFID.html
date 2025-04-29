@@ -1,0 +1,335 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asistencia RFID Avanzado</title>
+    <link rel="stylesheet" href="{% static 'css/all.css' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #121212;
+        color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        background-color: #1f1f2e;
+        padding: 30px;
+        border-radius: 18px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      }
+
+      h1 {
+        text-align: center;
+        color: #00c3ff;
+        margin-bottom: 30px;
+      }
+
+      .filter-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .filter-section input,
+      .filter-section button {
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 16px;
+        border: none;
+        outline: none;
+      }
+
+      .filter-section input {
+        background-color: #2b2b3d;
+        color: #fff;
+      }
+
+      .filter-section button {
+        background-color: #00c3ff;
+        color: #000;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .filter-section button:hover {
+        background-color: #009dcf;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        min-width: 600px;
+      }
+
+      th,
+      td {
+        padding: 14px;
+        text-align: center;
+        border-bottom: 1px solid #444;
+      }
+
+      th {
+        background-color: #292942;
+        color: #00c3ff;
+      }
+
+      tr:hover {
+        background-color: #2a2a40;
+      }
+
+      .status-in {
+        color: #27ae60;
+        font-weight: bold;
+      }
+
+      .status-out {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      .extra-info {
+        font-size: 13px;
+        color: #aaa;
+      }
+
+      canvas {
+        margin-top: 30px;
+        background-color: #1a1a28;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 20px;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Sistema de Asistencia RFID</h1>
+
+      <div class="filter-section">
+        <input type="date" id="filter-date" />
+        <input
+          type="text"
+          id="filter-name"
+          placeholder="Buscar por nombre..."
+        />
+        <button onclick="filtrar()">Filtrar</button>
+      </div>
+
+      <div class="table-container">
+        <table id="attendance-table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Evento</th>
+              <th>Info Extra</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <canvas id="chart" height="120"></canvas>
+    </div>
+
+    <script>
+      const registros = [
+        {
+          usuario: "Juan Pérez",
+          fecha: "2025-04-28",
+          hora: "08:00",
+          tipo: "Entrada",
+          cargo: "Ingeniero",
+          depto: "IT",
+        },
+        {
+          usuario: "Juan Pérez",
+          fecha: "2025-04-28",
+          hora: "17:00",
+          tipo: "Salida",
+          cargo: "Ingeniero",
+          depto: "IT",
+        },
+        {
+          usuario: "Ana López",
+          fecha: "2025-04-28",
+          hora: "08:10",
+          tipo: "Entrada",
+          cargo: "Diseñadora",
+          depto: "UX",
+        },
+        {
+          usuario: "Ana López",
+          fecha: "2025-04-28",
+          hora: "17:05",
+          tipo: "Salida",
+          cargo: "Diseñadora",
+          depto: "UX",
+        },
+        {
+          usuario: "Carlos Ruiz",
+          fecha: "2025-04-28",
+          hora: "08:05",
+          tipo: "Entrada",
+          cargo: "Analista",
+          depto: "BI",
+        },
+        {
+          usuario: "Carlos Ruiz",
+          fecha: "2025-04-28",
+          hora: "16:45",
+          tipo: "Salida",
+          cargo: "Analista",
+          depto: "BI",
+        },
+      ];
+
+      function renderTabla(filtrados) {
+        const tbody = document.querySelector("#attendance-table tbody");
+        tbody.innerHTML = "";
+
+        if (filtrados.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="no-results">No se encontraron registros.</td></tr>`;
+          return;
+        }
+
+        filtrados.forEach((registro) => {
+          const fila = document.createElement("tr");
+          fila.innerHTML = `
+          <td>${registro.usuario}</td>
+          <td>${registro.fecha}</td>
+          <td>${registro.hora}</td>
+          <td class="${
+            registro.tipo === "Entrada" ? "status-in" : "status-out"
+          }">${registro.tipo}</td>
+          <td class="extra-info">${registro.cargo} - ${registro.depto}</td>
+        `;
+          tbody.appendChild(fila);
+        });
+      }
+
+      function filtrar() {
+        const fecha = document.getElementById("filter-date").value;
+        const nombre = document
+          .getElementById("filter-name")
+          .value.toLowerCase();
+
+        const filtrados = registros.filter((r) => {
+          const matchFecha = !fecha || r.fecha === fecha;
+          const matchNombre =
+            !nombre || r.usuario.toLowerCase().includes(nombre);
+          return matchFecha && matchNombre;
+        });
+
+        renderTabla(filtrados);
+        actualizarGrafico(filtrados);
+      }
+
+      function actualizarGrafico(data) {
+        const tiempos = {};
+
+        for (let i = 0; i < data.length; i++) {
+          const evento = data[i];
+          if (evento.tipo === "Entrada") {
+            const salida = data.find(
+              (e, j) =>
+                e.usuario === evento.usuario &&
+                e.fecha === evento.fecha &&
+                e.tipo === "Salida" &&
+                j > i
+            );
+            if (salida) {
+              const entradaTime = new Date(`1970-01-01T${evento.hora}:00`);
+              const salidaTime = new Date(`1970-01-01T${salida.hora}:00`);
+              const horas = (salidaTime - entradaTime) / (1000 * 60 * 60);
+              if (!tiempos[evento.usuario]) tiempos[evento.usuario] = 0;
+              tiempos[evento.usuario] += horas;
+            }
+          }
+        }
+
+        const labels = Object.keys(tiempos);
+        const horas = Object.values(tiempos).map(
+          (h) => Math.round(h * 100) / 100
+        );
+
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = horas;
+        chart.update();
+      }
+
+      const ctx = document.getElementById("chart").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Horas trabajadas",
+              data: [],
+              borderColor: "#00c3ff",
+              backgroundColor: "rgba(0, 195, 255, 0.2)",
+              tension: 0.4,
+              fill: true,
+              pointRadius: 5,
+              pointBackgroundColor: "#00c3ff",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: "#fff" } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.raw} horas`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: "#ccc" },
+              title: {
+                display: true,
+                text: "Horas",
+                color: "#ccc",
+              },
+            },
+            x: {
+              ticks: { color: "#ccc" },
+            },
+          },
+        },
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderTabla(registros);
+        actualizarGrafico(registros);
+      });
+    </script>
+  </body>
+</html>
