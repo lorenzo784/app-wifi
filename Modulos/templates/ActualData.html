@@ -251,14 +251,10 @@
           <h3>Sensor de Distancia</h3>
           <div class="sensor-value">
             Distancia:
-            <span class="value-display" id="distance-value">100</span> cm (<span
-              id="distance-meters"
-              >1.00</span
-            >
-            m)
+            <span class="value-display" id="distance-value">250</span> cm
           </div>
           <div class="sensor-description">
-            Sensor ultrasónico para detección de obstáculos sin límite máximo.
+            Sensor ultrasónico para medir la distancia hasta el objeto.
           </div>
           <div class="data-card">
             <h4>Especificaciones</h4>
@@ -267,152 +263,60 @@
                 <span class="spec-label">Tipo:</span><span>Ultrasónico</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Precisión:</span><span>±1 cm</span>
+                <span class="spec-label">Rango:</span><span>2cm - 400cm</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Voltaje:</span><span>5V DC</span>
+                <span class="spec-label">Precisión:</span><span>±1cm</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Ángulo:</span><span>15°</span>
+                <span class="spec-label">Voltaje:</span><span>5V</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">Frecuencia:</span><span>40 kHz</span>
+                <span class="spec-label">Interfaz:</span><span>Digital</span>
               </div>
             </div>
             <div style="margin-top: 20px">
               <strong>Estado:</strong>
-              <span id="distance-status" style="color: blue"
-                >Operativo (100 cm)</span
+              <span id="distance-meters" style="color: blue"
+                >2.50 metros</span
               >
             </div>
           </div>
         </div>
       </div>
-    <script src="{% static 'js/all.js' %}"></script>
+    </div>
+
     <script>
-      function updateSensor(
-        url,
-        valueId,
-        statusId,
-        unit,
-        convertFn,
-        meterId = null
-      ) {
-        fetch(url)
-          .then((r) => (r.ok ? r.json() : Promise.reject("Error")))
-          .then((d) => {
-            const v = d.value;
-            document.getElementById(valueId).textContent = v;
-            if (meterId) {
-              document.getElementById(meterId).textContent = (v / 100).toFixed(
-                2
-              );
+      function fetchSensorData() {
+        fetch('/get-potentiometer/')
+          .then(response => response.json())
+          .then(data => {
+            if (!data.error) {
+              // Potenciómetro
+              document.getElementById('pot-value').innerText = data.value;
+              document.getElementById('status').innerText = `Operativo (${data.value})`;
+
+              // Humedad y temperatura
+              document.getElementById('humidity-value').innerText = data.temperatura;
+              document.getElementById('humidity-status').innerText = `Operativo (${data.temperatura}°C)`;
+
+              // Distancia
+              document.getElementById('distance-value').innerText = data.distancia;
+              let distanceMeters = (data.distancia / 100).toFixed(2);
+              document.getElementById('distance-meters').innerText = distanceMeters;
+
+              console.log(data);
+            } else {
+              console.error('No hay datos disponibles');
             }
-            const s = document.getElementById(statusId);
-            s.textContent = `Operativo (${v}${unit})`;
-            s.style.color = "blue";
           })
-          .catch(() => {
-            const s = document.getElementById(statusId);
-            s.textContent = "Error conexión";
-            s.style.color = "red";
-          });
+          .catch(error => console.error('Error al obtener datos:', error));
       }
 
-      function updateHistorial(url, tbodyId, key) {
-        fetch(url)
-          .then((r) => r.json())
-          .then((d) => {
-            const t = document.getElementById(tbodyId);
-            t.innerHTML = "";
-            d.historial.forEach((r) => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `<td>${r.fecha}</td><td>${r[key]}</td>`;
-              t.appendChild(tr);
-            });
-          });
-      }
-
-      setInterval(
-        () =>
-          updateSensor("/get-potentiometer/", "pot-value", "status", "", null),
-        500
-      );
-      setInterval(
-        () =>
-          updateSensor(
-            "/get-humidity/",
-            "humidity-value",
-            "humidity-status",
-            "°C"
-          ),
-        500
-      );
-      setInterval(
-        () =>
-          updateSensor(
-            "/get-distance/",
-            "distance-value",
-            "distance-status",
-            " cm",
-            null,
-            "distance-meters"
-          ),
-        500
-      );
-
-      setInterval(
-        () => updateHistorial("/historial/", "historial-body", "valor"),
-        1000
-      );
-      setInterval(
-        () =>
-          updateHistorial(
-            "/humidity-historial/",
-            "humidity-historial-body",
-            "temperatura"
-          ),
-        1000
-      );
-      setInterval(
-        () =>
-          updateHistorial(
-            "/distance-historial/",
-            "distance-historial-body",
-            "distancia"
-          ),
-        1000
-      );
-
-      document.addEventListener("DOMContentLoaded", () => {
-        updateSensor("/get-potentiometer/", "pot-value", "status", "", null);
-        updateSensor(
-          "/get-humidity/",
-          "humidity-value",
-          "humidity-status",
-          "°C"
-        );
-        updateSensor(
-          "/get-distance/",
-          "distance-value",
-          "distance-status",
-          " cm",
-          null,
-          "distance-meters"
-        );
-
-        updateHistorial("/historial/", "historial-body", "valor");
-        updateHistorial(
-          "/humidity-historial/",
-          "humidity-historial-body",
-          "temperatura"
-        );
-        updateHistorial(
-          "/distance-historial/",
-          "distance-historial-body",
-          "distancia"
-        );
-      });
+      window.onload = () => {
+        fetchSensorData();
+        setInterval(fetchSensorData, 2000);
+      };
     </script>
   </body>
 </html>

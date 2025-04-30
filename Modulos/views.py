@@ -17,6 +17,9 @@ def get_potentiometer_value(request):
         
         return JsonResponse({
             'value': last_data.valor,
+            'humedad': last_data.humedad,
+            'temperatura': last_data.temperatura,
+            'distancia': last_data.distancia,
             'voltage': voltage,
             'resistance': resistance,
             'timestamp': last_data.fecha.strftime('%Y-%m-%d %H:%M:%S')
@@ -43,6 +46,7 @@ def set_data(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+            print("Datos recibidos:", data)  # Verifica los datos en la consola
 
             valor = data.get("valor")
             humedad = data.get("humedad")
