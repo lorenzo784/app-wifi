@@ -24,4 +24,6 @@ urlpatterns = [
     path('get-potentiometer/', views.get_potentiometer_value, name='get_potentiometer'),
     path('api/set-data', views.set_data),
     path('historial/', views.historial, name='historial'),
+    path('get-humidity/', views.get_humidity),
+    path('get-distance/', views.get_distance),
 ]

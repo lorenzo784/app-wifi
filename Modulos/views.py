@@ -25,17 +25,38 @@ def get_potentiometer_value(request):
         return JsonResponse({
             'error': 'No data available'
         })
+    
+def get_humidity(request):
+    last_data = DatoSensor.objects.last()
+    if last_data:
+        return JsonResponse({'value': last_data.temperatura})
+    return JsonResponse({'error': 'No data available'})
+
+def get_distance(request):
+    last_data = DatoSensor.objects.last()
+    if last_data:
+        return JsonResponse({'value': last_data.distancia})
+    return JsonResponse({'error': 'No data available'})
 
 @csrf_exempt
 def set_data(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+
             valor = data.get("valor")
+            humedad = data.get("humedad")
+            temperatura = data.get("temperatura")
+            distancia = data.get("distancia")
 
             if valor is not None:
-                DatoSensor.objects.create(valor=valor)
-                return JsonResponse({"status": "ok", "mensaje": "Valor guardado"})
+                DatoSensor.objects.create(
+                    valor=valor,
+                    humedad=humedad,
+                    temperatura=temperatura,
+                    distancia=distancia
+                )
+                return JsonResponse({"status": "ok", "mensaje": "Datos guardados"})
             else:
                 return JsonResponse({"status": "error", "mensaje": "Valor no proporcionado"}, status=400)
 
