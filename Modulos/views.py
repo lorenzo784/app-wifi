@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 def index(request):
-    return render(request, 'RFID.html')
+    return render(request, 'ActualData.html')
 
 def get_potentiometer_value(request):
     last_data = DatoSensor.objects.last()
